@@ -47,6 +47,11 @@ void WiFiManagerParameter::init(const char *id, const char *placeholder, const c
 const char* WiFiManagerParameter::getValue() {
   return _value;
 }
+
+char *WiFiManagerParameter::setValue(const char *value) {
+  return strncpy(_value, value, _length);
+}
+
 const char* WiFiManagerParameter::getID() {
   return _id;
 }
@@ -568,6 +573,12 @@ void WiFiManager::handleWifiSave() {
     DEBUG_WM(server->arg("sn"));
     String sn = server->arg("sn");
     optionalIPFromString(&_sta_static_sn, sn.c_str());
+  }
+
+  if ( _savecallback != NULL) {
+    DEBUG_WM(F("F_savecallback: handleWifiSave()"));
+    //todo: check if any custom parameters actually exist, and check if they really changed maybe
+    _savecallback();
   }
 
   String page = FPSTR(HTTP_HEAD);
